@@ -184,5 +184,101 @@ from lineitems
 where ordno in
 (select ordno
 from orders
-where sysdate-orddate<=7));
+where sysdate-orddate<=7))
+or itemno in
+(select itemno
+from lineitems
+group by itemno
+having sum(qty)>10);
+
+select avg(price)
+from lineitems;
+
+
+select *
+from orders
+where ordno in
+(select ordno
+from lineitems l,items i
+where l.itemno=i.itemno
+and price>rate);
+
+select *
+from customers
+where custno in
+(select custno
+from orders 
+group by custno
+having count(*)=
+(select max(count(*))
+from orders
+group by custno));
+
+select *
+from items
+where itemno in
+(select itemno
+from lineitems
+where ordno in
+(select ordno
+from orders
+where custno=102));
+
+update orders
+set shipdate=(select max(orddate) from orders)
+where ordno=1004;
+
+select *
+from items
+where rate=
+(select max(rate)
+from items);
+
+select custno
+from orders
+group by custno
+having count(*)>=2;
+
+select*
+from customers
+where custno in
+(select custno
+from orders
+group by custno
+having count(*)>=2);
+
+
+select *
+from customers
+where custno not in
+(select custno
+from orders);
+
+select *
+from customers
+where custno not in
+(select custno
+from orders
+where months_between(sysdate,orddate)<=6);
+
+select *
+from items
+where itemno in
+(select itemno
+from lineitems
+where price>5000
+group by itemno
+having sum(qty)>5);
+
+select *
+from orders
+where custno in
+(select  custno
+from customers
+where phone like '567%'
+or ordno in
+(select ordno 
+from lineitems 
+group by ordno
+having count(*)>=3));
 
