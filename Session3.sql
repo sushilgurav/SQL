@@ -134,3 +134,55 @@ where order.ordno=lineitems.ordno; and where itemno=5; \
 select itemno,sum(qty) total_num_of_units,max(price),min(price)
 from lineitems
 group by itemno;
+
+select ordno,max(price)
+from lineitems
+group by ordno
+having sum(price*qty)>10000;
+
+select ordno,ordate,o.custno,custname
+from orders o,customers c
+where o.custno=c.custno and ordno in
+(select ordno
+from lineitems
+where itemno=5);
+
+select custno
+from orders 
+where ordno in
+(select ordno 
+from lineitems
+group by ordno
+having sum(qty*price)>30000);
+
+select * 
+from customers
+where custno in
+(select custno
+from orders 
+where ordno in
+(select ordno 
+from lineitems
+group by ordno
+having sum(qty*price)>30000));
+
+select * 
+from orders
+where ordno in
+(select ordno
+from lineitems
+where price=
+(select max(price)
+from lineitems
+where itemno=3));
+
+select *
+from items
+where itemno in
+(select itemno
+from lineitems
+where ordno in
+(select ordno
+from orders
+where sysdate-orddate<=7));
+
